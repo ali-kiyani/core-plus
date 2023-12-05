@@ -7,8 +7,8 @@ import { CONFIG_ACTIONS } from '../../constants/ReducerActions';
 
 const RevenuesTable = (props: {
   revenuesByMonth: RevenueReportPayload;
-  generateReport: () => void;
-  generateAppointmentsReport: (date: string) => void;
+  generateReport: (pageNumber?: number) => void;
+  generateAppointmentsReport: (date: string, pageNumber?: number) => void;
 }): JSX.Element => {
   const { revenuesByMonth, generateReport, generateAppointmentsReport } = props;
 
@@ -32,12 +32,12 @@ const RevenuesTable = (props: {
 
   const handlePrev = useCallback(() => {
     configDispatch({ type: CONFIG_ACTIONS.PREV_REVENUE_PAGE });
-    generateReport();
+    generateReport(configState?.currentRevenuesPage - 1);
   }, [configState]);
 
   const handleNext = useCallback(() => {
     configDispatch({ type: CONFIG_ACTIONS.NEXT_REVENUE_PAGE });
-    generateReport();
+    generateReport(configState?.currentRevenuesPage + 1);
   }, [configState]);
 
   const totalPages = Math.ceil(

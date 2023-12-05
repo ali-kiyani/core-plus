@@ -6,7 +6,7 @@ import { Button } from '../Button';
 
 const AppointmentsTable = (props: {
   appointmentsReport: AppointmentsReportPayload;
-  generateAppointmentsReport: (date: string) => void;
+  generateAppointmentsReport: (date: string, pageNumber?: number) => void;
   generateAppointmentDetailsReport: (appointmentId: number) => void;
 }): JSX.Element => {
   const {
@@ -36,12 +36,18 @@ const AppointmentsTable = (props: {
 
   const handlePrev = useCallback(() => {
     configDispatch({ type: CONFIG_ACTIONS.PREV_APPOINTMENTS_PAGE });
-    generateAppointmentsReport(configState?.selectedReportMonth);
+    generateAppointmentsReport(
+      configState?.selectedReportMonth,
+      configState?.currentAppointmentsPage - 1
+    );
   }, [configState]);
 
   const handleNext = useCallback(() => {
     configDispatch({ type: CONFIG_ACTIONS.NEXT_APPOINTMENTS_PAGE });
-    generateAppointmentsReport(configState?.selectedReportMonth);
+    generateAppointmentsReport(
+      configState?.selectedReportMonth,
+      configState?.currentAppointmentsPage + 1
+    );
   }, [configState]);
 
   const totalPages = Math.ceil(

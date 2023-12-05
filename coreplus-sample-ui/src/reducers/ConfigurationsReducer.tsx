@@ -41,13 +41,13 @@ export const ConfigurationsReducer = (
     case CONFIG_ACTIONS.NEXT_APPOINTMENTS_PAGE:
       return {
         ...state,
-        currentRevenuesPage: state?.currentAppointmentsPage + 1,
+        currentAppointmentsPage: state?.currentAppointmentsPage + 1,
       };
 
     case CONFIG_ACTIONS.PREV_APPOINTMENTS_PAGE:
       return {
         ...state,
-        currentRevenuesPage: state?.currentAppointmentsPage - 1,
+        currentAppointmentsPage: state?.currentAppointmentsPage - 1,
       };
 
     case CONFIG_ACTIONS.SHOW_APPOINTMENTS:

@@ -4,9 +4,11 @@ import { Button } from '../Button';
 import { useCallback } from 'react';
 import { useFormContext } from '../../contexts/FormContext';
 import { FORM_ACTIONS } from '../../constants/ReducerActions';
-import './DateFilters.styles.css';  
+import './DateFilters.styles.css';
 
-const DateFilters = (props: { generateReport: () => void }): JSX.Element => {
+const DateFilters = (props: {
+  generateReport: (pageNumber?: number) => void;
+}): JSX.Element => {
   const { generateReport } = props;
 
   const { state, dispatch } = useFormContext();
@@ -50,7 +52,7 @@ const DateFilters = (props: { generateReport: () => void }): JSX.Element => {
         <Button
           text="Generate"
           type="button"
-          onClick={generateReport}
+          onClick={() => generateReport()}
           isDisabled={isDisabled}
         />
       </div>

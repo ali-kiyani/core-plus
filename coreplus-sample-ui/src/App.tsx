@@ -53,34 +53,47 @@ function App() {
 
   const [isPractitionerSelected, setIsPractitionerSelected] = useState(false);
 
-  const generateReport = useCallback(() => {
-    getPractitionerAppointmentsByMonth(
-      Number.parseInt(formState?.practitioner),
-      new Date(formState?.dateFrom).toLocaleDateString(),
-      new Date(formState?.dateTo).toLocaleDateString(),
-      configState?.currentRevenuesPage * configState?.recordsPerPage,
-      configState?.recordsPerPage
-    ).then((data: RevenueReportPayload) => {
-      setRevenueReport(data);
+  const generateReport = useCallback(
+    (pageNumber?: number) => {
+      const skip =
+        pageNumber !== undefined
+          ? pageNumber
+          : configState?.currentRevenuesPage;
 
-      configDispatch({
-        type: CONFIG_ACTIONS.SET_IS_REPORT_GENERATED,
-        payload: true,
+      getPractitionerAppointmentsByMonth(
+        Number.parseInt(formState?.practitioner),
+        new Date(formState?.dateFrom).toLocaleDateString(),
+        new Date(formState?.dateTo).toLocaleDateString(),
+        skip * configState?.recordsPerPage,
+        configState?.recordsPerPage
+      ).then((data: RevenueReportPayload) => {
+        setRevenueReport(data);
+
+        configDispatch({
+          type: CONFIG_ACTIONS.SET_IS_REPORT_GENERATED,
+          payload: true,
+        });
       });
-    });
-  }, [formState, configState]);
+    },
+    [formState, configState]
+  );
 
   const generateAppointmentsReport = useCallback(
-    (date: string) => {
+    (date: string, pageNumber?: number) => {
       configDispatch({
         type: CONFIG_ACTIONS.SET_SELECTED_REPORT_MONTH,
         payload: date,
       });
 
+      const skip =
+        pageNumber !== undefined
+          ? pageNumber
+          : configState?.currentRevenuesPage;
+
       getAppointmentsByMonth(
         Number.parseInt(formState?.practitioner),
         date,
-        configState?.currentAppointmentsPage * configState?.recordsPerPage,
+        skip * configState?.recordsPerPage,
         configState?.recordsPerPage
       ).then((data: AppointmentsReportPayload) => {
         setAppointmentsReport(data);
@@ -88,6 +101,10 @@ function App() {
         configDispatch({
           type: CONFIG_ACTIONS.SHOW_APPOINTMENTS,
           payload: true,
+        });
+        configDispatch({
+          type: CONFIG_ACTIONS.SHOW_APPOINTMENT_DETAILS,
+          payload: false,
         });
       });
     },
