@@ -1,0 +1,25 @@
+.report-table {
+  border: 1px solid lightgray;
+
+  .table-header {
+    background-color: lightgray;
+  }
+
+  .table-body {
+    .hover:hover {
+      cursor: pointer;
+    }
+  }
+
+  .table-footer {
+    border-top: 1px solid lightgray;
+  }
+
+  .buttons button {
+    width: fit-content;
+  }
+
+  .bl-1 {
+    border-left: 1px solid lightgray;
+  }
+}

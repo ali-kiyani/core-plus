@@ -21,3 +21,27 @@
   grid-area: 2 / 2 / 4 / 3;
   @apply border-[1px] border-gray-300 p-2;
 }
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.pracinfo-content {
+  height: 100%;
+}
+
+.appointments-col,
+.appointment-details-col {
+  border-left: 1px solid rgb(209, 213, 219);
+}
+
+.sec-heading {
+  font-weight: bold;
+}
+
+.sec-underline {
+  text-decoration: underline;
+}

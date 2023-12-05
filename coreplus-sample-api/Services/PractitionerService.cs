@@ -40,34 +40,56 @@ public class PractitionerService
         return practitioners.Where(practitioner => (int)practitioner.level < 2).Select(prac => new PractitionerDto(prac.id, prac.name, prac.level));
     }
 
-    public async Task<PractitionerAppointmentListDto> GetPractitionersAppointmentDataByDate(long id, string startDate, string endDate, int? skip, int? count)
+    public async Task<PractitionerAppointmentByMonthListDto> GetPractitionersAppointmentDataByMonth(long id, string startDate, string endDate, int? skip, int? count)
     {
-        DateTime sDate, eDate;
-        try
+        DateTime sDate;
+        if (DateTime.TryParse(startDate, out sDate) && DateTime.TryParse(endDate, out DateTime eDate))
         {
-            sDate = DateTime.Parse(startDate);
-            eDate = DateTime.Parse(endDate);
-        }
-        catch(Exception ex)
+            sDate = new DateTime(sDate.Year, sDate.Month, 1);
+            eDate = new DateTime(eDate.Year, eDate.Month, 1).AddMonths(1);
+            
+            var data = appointments.Where(appointment => appointment.practitioner_id == id && 
+            DateTime.Parse(appointment.date) >= sDate && DateTime.Parse(appointment.date) < eDate)
+                .GroupBy(x => DateTime.Parse(x.date).Month + "/" + DateTime.Parse(x.date).Year);
+            var totalCount = data.Count();
+            if (skip.HasValue && count.HasValue)
+            {
+                data = data.Skip(skip.Value).Take(count.Value);
+            }
+            List<PractitionersAppointmentByMonthDto> list = new();
+            foreach(var e in data)
+            {
+                PractitionersAppointmentByMonthDto practitionersAppointmentDtodto = new(e.Key, e.Sum(x => x.revenue), e.Sum(x => x.cost));
+                list.Add(practitionersAppointmentDtodto);
+            }
+           
+            return new PractitionerAppointmentByMonthListDto(totalCount, list);
+        } else
         {
-            throw new Exception("Unable to parse start date / end date");
+            throw new Exception("Unable to parse start / end date");
         }
-        sDate = new DateTime(sDate.Year, sDate.Month, 1);
-        eDate = new DateTime(eDate.Year, eDate.Month, 1);
-        var data = appointments.Where(appointment => appointment.practitioner_id == id && DateTime.Parse(appointment.date) >= sDate && DateTime.Parse(appointment.date) <= eDate);
-        if (skip.HasValue && count.HasValue)
-            data = data.Skip(skip.Value).Take(count.Value);
-        return new PractitionerAppointmentListDto(data.Count(), data.Select(appointment => new PractitionersAppointmentDto(appointment.id, appointment.date, appointment.revenue, appointment.cost)));
     }
 
-    public async Task<PractitionerAppointmentListDto> GetPractitionerAppointments(long id, int? skip, int? count)
+    public async Task<PractitionerAppointmentListDto> GetPractitionersAppointmentData(long id, string date, int? skip, int? count)
     {
-        var practitionersAppointments = appointments.Where(appointment => appointment.practitioner_id == id);
-        var totalCount = practitionersAppointments.Count();
-        if (skip.HasValue && count.HasValue)
-            practitionersAppointments = practitionersAppointments.Skip(skip.Value).Take(count.Value);
+        var splitDate = date.Split("/");
+        var newDate = splitDate[0] + "/1/" + splitDate[1];
+        if (DateTime.TryParse(newDate, out DateTime sDate))
+        {
+            DateTime eDate = sDate.AddMonths(1);
+            var data = appointments.Where(appointment => appointment.practitioner_id == id && DateTime.Parse(appointment.date) >= sDate && DateTime.Parse(appointment.date) < eDate);
+            var totalCount = data.Count();
+            if (skip.HasValue && count.HasValue)
+            {
+                data = data.Skip(skip.Value).Take(count.Value);
+            }
 
-        return new PractitionerAppointmentListDto(totalCount, practitionersAppointments.Select(appointment => new PractitionersAppointmentDto(appointment.id, appointment.date.ToString(), appointment.revenue, appointment.cost)));
+            return new PractitionerAppointmentListDto(totalCount, data.Select(x => new PractitionersAppointmentDto(x.id, x.date, x.revenue, x.cost)));
+        }
+        else
+        {
+            throw new Exception("Unable to parse start / end date");
+        }
     }
 
     public async Task<AppointmentDto> GetAppointmentData(long pid, long aid)

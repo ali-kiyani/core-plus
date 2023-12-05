@@ -7,6 +7,7 @@ public static class MapEndpoints
         group.MapGetAllPractitioners();
         group.MapGetSupervisorPractitioners();
         group.MapGetRemainingPractitioners();
+        group.MapGetPractitionerAppointmentsByMonth();
         group.MapGetPractitionerAppointments();
         group.MapGetAppointmentData();
         return group;

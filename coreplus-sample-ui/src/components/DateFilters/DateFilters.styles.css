@@ -1,0 +1,8 @@
+.generate-button button {
+  height: fit-content;
+}
+
+.generate-button {
+  display: flex;
+  align-items: flex-end;
+}
