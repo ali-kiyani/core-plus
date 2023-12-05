@@ -49,7 +49,7 @@ public class PractitionerService
 
             var data = appointments.Where(appointment => appointment.practitioner_id == id &&
             DateTime.Parse(appointment.date) >= sDate && DateTime.Parse(appointment.date) < eDate)
-                .GroupBy(x => DateTime.Parse(x.date).Month + "/" + DateTime.Parse(x.date).Year).OrderByDescending(x => x.Key).AsEnumerable();
+                .GroupBy(x => DateTime.Parse(x.date).Month + "/" + DateTime.Parse(x.date).Year).OrderByDescending(x => DateTime.Parse(x.Key)).AsEnumerable();
             var totalCount = data.Count();
             if (skip.HasValue && count.HasValue)
             {
@@ -77,7 +77,8 @@ public class PractitionerService
         if (DateTime.TryParse(newDate, out DateTime sDate))
         {
             DateTime eDate = sDate.AddMonths(1);
-            var data = appointments.Where(appointment => appointment.practitioner_id == id && DateTime.Parse(appointment.date) >= sDate && DateTime.Parse(appointment.date) < eDate);
+            var data = appointments.Where(appointment => appointment.practitioner_id == id && DateTime.Parse(appointment.date) >= sDate && DateTime.Parse(appointment.date) < eDate)
+                .OrderByDescending(x => DateTime.Parse(x.date)).AsEnumerable();
             var totalCount = data.Count();
             if (skip.HasValue && count.HasValue)
             {
