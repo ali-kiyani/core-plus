@@ -42,29 +42,29 @@ public class PractitionerService
 
     public async Task<PractitionerAppointmentByMonthListDto> GetPractitionersAppointmentDataByMonth(long id, string startDate, string endDate, int? skip, int? count)
     {
-        DateTime sDate;
-        if (DateTime.TryParse(startDate, out sDate) && DateTime.TryParse(endDate, out DateTime eDate))
+        if (DateTime.TryParse(startDate, out DateTime sDate) && DateTime.TryParse(endDate, out DateTime eDate))
         {
             sDate = new DateTime(sDate.Year, sDate.Month, 1);
             eDate = new DateTime(eDate.Year, eDate.Month, 1).AddMonths(1);
-            
-            var data = appointments.Where(appointment => appointment.practitioner_id == id && 
+
+            var data = appointments.Where(appointment => appointment.practitioner_id == id &&
             DateTime.Parse(appointment.date) >= sDate && DateTime.Parse(appointment.date) < eDate)
-                .GroupBy(x => DateTime.Parse(x.date).Month + "/" + DateTime.Parse(x.date).Year);
+                .GroupBy(x => DateTime.Parse(x.date).Month + "/" + DateTime.Parse(x.date).Year).OrderByDescending(x => x.Key).AsEnumerable();
             var totalCount = data.Count();
             if (skip.HasValue && count.HasValue)
             {
                 data = data.Skip(skip.Value).Take(count.Value);
             }
             List<PractitionersAppointmentByMonthDto> list = new();
-            foreach(var e in data)
+            foreach (var e in data)
             {
                 PractitionersAppointmentByMonthDto practitionersAppointmentDtodto = new(e.Key, e.Sum(x => x.revenue), e.Sum(x => x.cost));
                 list.Add(practitionersAppointmentDtodto);
             }
-           
+
             return new PractitionerAppointmentByMonthListDto(totalCount, list);
-        } else
+        }
+        else
         {
             throw new Exception("Unable to parse start / end date");
         }

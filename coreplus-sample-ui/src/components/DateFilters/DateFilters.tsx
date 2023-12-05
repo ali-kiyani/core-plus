@@ -30,7 +30,7 @@ const DateFilters = (props: { generateReport: () => void }): JSX.Element => {
         <div className="sec-heading">From:</div>
         <Input
           placeholder={DATE_FROM}
-          type="date"
+          type="month"
           value={state?.dateFrom}
           onChange={onDateFromChanged}
         />
@@ -40,7 +40,7 @@ const DateFilters = (props: { generateReport: () => void }): JSX.Element => {
         <div className="sec-heading">To:</div>
         <Input
           placeholder={DATE_TO}
-          type="date"
+          type="month"
           value={state?.dateTo}
           onChange={onDateToChanged}
         />
